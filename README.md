@@ -1,6 +1,6 @@
-# astrogia
+# Andromeda
 
-Frontend template and framework built on top [Astro](https://astro.build/) and [Gia](https://github.com/giantcz/gia)
+Frontend template and framework built on [Astro](https://astro.build/) components
 
 ## 🚀 Project Structure
 
