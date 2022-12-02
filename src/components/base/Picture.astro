@@ -1,0 +1,23 @@
+---
+import Source from '@/components/base/Source.astro'
+import Image from '@/components/base/Image.astro'
+
+import type { Props as ImageProps } from '@/components/base/Image.astro'
+import type { ClassName } from '@/types'
+
+export type PictureSources = Omit<ImageProps, 'alt'>[]
+
+export interface Props {
+  image: ImageProps
+  sources: PictureSources
+  imageClass?: string
+  class?: ClassName
+}
+
+const { sources = [], image, imageClass = '', class: className } = Astro.props
+---
+
+<picture class:list={className}>
+  {sources && sources.length > 0 && sources.map((source) => <Source {...source} />)}
+  {image && <Image {...image} class={imageClass} />}
+</picture>

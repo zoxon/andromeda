@@ -1,0 +1,15 @@
+---
+import { stringifySrcset, stringifySizes } from '@/helpers/image'
+import type { ImageSrcset, ImageSizes } from '@/components/base/Image.astro'
+
+export interface Props {
+  src: string
+  srcSet?: ImageSrcset
+  sizes?: ImageSizes[]
+  type?: string
+}
+
+const { src: source = '', srcSet: sourceSet = {}, sizes = [], type = '' } = Astro.props
+---
+
+<source src={source} type={type} srcset={stringifySrcset(sourceSet)} sizes={stringifySizes(sizes)} />
