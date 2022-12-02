@@ -1,0 +1,29 @@
+---
+import type { ClassName } from "@/types";
+
+export interface Props {
+  noSpacing?: boolean;
+  fluid?: boolean;
+  tag?: string;
+  class?: ClassName;
+}
+
+const {
+  noSpacing = false,
+  fluid = false,
+  tag: Tag = "div",
+  class: className,
+  ...atributes
+} = Astro.props;
+---
+
+<Tag
+  class:list={[
+    "mx-auto shrink-0 box-content",
+    { "sm:px-8 px-6": !noSpacing, "max-w-screen-xl": !fluid },
+    className,
+  ]}
+  {...atributes}
+>
+  <slot />
+</Tag>
