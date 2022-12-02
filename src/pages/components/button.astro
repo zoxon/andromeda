@@ -1,5 +1,5 @@
 ---
-import BaseLayout from "@/layouts/Base.astro";
+import DefaultLayout from "@/layouts/Default.astro";
 import Container from "@/components/base/Container.astro";
 import Button from "@/components/base/Button.astro";
 import type {
@@ -13,11 +13,11 @@ const sizes: ButtonSize[] = ["sm", "md", "lg", "xl", "2xl"];
 const themes: ButtonTheme[] = ["solid", "outlined"];
 const roundings = [{ rounded: false }, { rounded: true }, { pill: true }];
 
-const capitalized = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+const capitalized = (string_: string) => string_.charAt(0).toUpperCase() + string_.slice(1);
 ---
 
-<BaseLayout title="Buttons">
-  <Container tag="main">
+<DefaultLayout title="Buttons">
+  <Container tag="main" class="flex-1">
     <h1 class="text-3xl font-bold mb-4">Buttons</h1>
     <div>
       {
@@ -60,4 +60,4 @@ const capitalized = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
       }
     </div>
   </Container>
-</BaseLayout>
+</DefaultLayout>

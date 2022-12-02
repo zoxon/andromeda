@@ -1,0 +1,22 @@
+---
+import BaseLayout from '@/layouts/Base.astro'
+import Header from '@/components/layout/Header.astro'
+import Footer from '@/components/layout/Footer.astro'
+
+import type { ClassName } from '@/types'
+
+export interface Props {
+  title: string
+  class?: ClassName
+}
+
+const { title, class: className } = Astro.props
+---
+
+<BaseLayout title={title} class:list={['flex flex-col min-h-screen', className]}>
+  <Header />
+
+  <slot />
+
+  <Footer />
+</BaseLayout>
