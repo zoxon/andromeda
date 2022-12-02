@@ -1,0 +1,182 @@
+---
+import Link from "@/components/base/Link.astro";
+
+import type { ClassName } from "@/types";
+
+const ButtonColor = {
+  blue: "blue",
+  black: "black",
+} as const;
+
+export type ButtonColor = typeof ButtonColor[keyof typeof ButtonColor];
+
+const ButtonSize = {
+  sm: "sm",
+  md: "md",
+  lg: "lg",
+  xl: "xl",
+  "2xl": "2xl",
+} as const;
+
+export type ButtonSize = typeof ButtonSize[keyof typeof ButtonSize];
+
+const ButtonTheme = {
+  solid: "solid",
+  outlined: "outlined",
+} as const;
+
+export type ButtonTheme = typeof ButtonTheme[keyof typeof ButtonTheme];
+
+export interface Props {
+  tag?: string;
+  href?: string;
+  type?: string;
+  target?: string;
+  rel?: string;
+  color?: ButtonColor;
+  size?: ButtonSize;
+  theme?: ButtonTheme;
+  rounded?: boolean;
+  pill?: boolean;
+  class?: ClassName;
+  disabled?: boolean;
+  external?: boolean;
+}
+
+const ComponentType = {
+  Unknown: "Unknown",
+  Link: "Link",
+  Button: "Button",
+};
+
+type ComponentType = typeof ComponentType[keyof typeof ComponentType];
+
+const {
+  tag = "button",
+  type = "button",
+  href,
+  rounded = false,
+  pill = false,
+  color,
+  size,
+  theme,
+  class: className,
+  ...attrs
+} = Astro.props;
+
+const isLink = () => {
+  if (tag === "a") return true;
+  if (href) return true;
+
+  return false;
+};
+
+const isButton = () => !isLink();
+
+const componentType = () => {
+  if (isLink()) return ComponentType.Link;
+  if (isButton()) return ComponentType.Button;
+  return ComponentType.Unknown;
+};
+
+const getComponent = () => {
+  switch (componentType()) {
+    case ComponentType.Link: {
+      return "a";
+    }
+
+    case ComponentType.Button: {
+      return "button";
+    }
+
+    default: {
+      return tag;
+    }
+  }
+};
+
+const Component = getComponent();
+
+const customAttributes = () => {
+  switch (componentType()) {
+    case ComponentType.Link: {
+      return {
+        href,
+        ...attrs,
+      };
+    }
+
+    case ComponentType.Button: {
+      return {
+        type,
+        ...attrs,
+      };
+    }
+
+    default: {
+      return {};
+    }
+  }
+};
+
+const classList = [
+  {
+    button: true,
+    [`button--color-${color}`]: color,
+    [`button--size-${size}`]: size,
+    [`button--theme-${theme}`]: theme,
+    "rounded-md": rounded,
+    "rounded-full": pill,
+  },
+  className,
+];
+---
+
+<Component class:list={classList} {...customAttributes()}>
+  <slot />
+</Component>
+
+<style is:global>
+  .button {
+    /* Base */
+    @apply inline-flex cursor-pointer items-center justify-center whitespace-nowrap border border-transparent text-center font-medium leading-snug shadow-sm transition-all ease-in-out active:shadow-inner disabled:pointer-events-none disabled:cursor-default;
+
+    /* Colors */
+    &--color-blue&--theme-solid {
+      @apply bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-40;
+    }
+
+    &--color-black&--theme-solid {
+      @apply bg-gray-800 text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-40;
+    }
+
+    &--color-blue&--theme-outlined {
+      @apply border-blue-600 bg-white text-blue-600 hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-100 disabled:opacity-50;
+    }
+
+    &--color-black&--theme-outlined {
+      @apply border-gray-800 bg-white text-gray-800 hover:bg-gray-800 hover:text-white focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:bg-gray-100;
+    }
+
+    /* Sizes */
+    &--size-sm {
+      @apply px-2.5 py-1.5 text-xs;
+    }
+
+    &--size-md {
+      @apply px-3 py-2 text-sm;
+    }
+
+    &--size-lg {
+      @apply px-4 py-2 text-sm;
+    }
+
+    &--size-xl {
+      @apply px-4 py-2 text-base;
+    }
+
+    &--size-2xl {
+      @apply px-6 py-3 text-base;
+    }
+  }
+</style>
