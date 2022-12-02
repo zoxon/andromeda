@@ -1,0 +1,63 @@
+---
+import BaseLayout from "@/layouts/Base.astro";
+import Container from "@/components/base/Container.astro";
+import Button from "@/components/base/Button.astro";
+import type {
+  ButtonColor,
+  ButtonSize,
+  ButtonTheme,
+} from "@/components/base/Button.astro";
+
+const colors: ButtonColor[] = ["black", "blue"];
+const sizes: ButtonSize[] = ["sm", "md", "lg", "xl", "2xl"];
+const themes: ButtonTheme[] = ["solid", "outlined"];
+const roundings = [{ rounded: false }, { rounded: true }, { pill: true }];
+
+const capitalized = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
+---
+
+<BaseLayout title="Buttons">
+  <Container tag="main">
+    <h1 class="text-3xl font-bold mb-4">Buttons</h1>
+    <div>
+      {
+        themes.map((theme) => (
+          <div class="mb-12">
+            <h2 class="mb-4 text-2xl font-bold">{capitalized(theme)}</h2>
+            {roundings.map((rounding) => (
+              <div>
+                {colors.map((color) => (
+                  <div class="mb-6 flex max-w-3xl flex-col items-center justify-start space-y-4 sm:flex-row sm:items-end sm:justify-between sm:space-y-0">
+                    {sizes.map((size) => (
+                      <Button
+                        color={color}
+                        size={size}
+                        theme={theme}
+                        {...rounding}
+                      >
+                        Button text
+                      </Button>
+                    ))}
+                  </div>
+                  <div class="mb-6 flex max-w-3xl flex-col items-center justify-start space-y-4 sm:flex-row sm:items-end sm:justify-between sm:space-y-0">
+                    {sizes.map((size) => (
+                      <Button
+                        color={color}
+                        size={size}
+                        theme={theme}
+                        {...rounding}
+                        disabled={true}
+                      >
+                        Button text
+                      </Button>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </Container>
+</BaseLayout>
