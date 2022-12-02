@@ -1,0 +1,44 @@
+---
+import type { ClassName } from "@/types";
+
+export interface Props {
+  href?: string;
+  type?: string;
+  target?: string;
+  rel?: string;
+  class?: string;
+  external?: boolean;
+}
+
+const {
+  href,
+  target,
+  rel,
+  class: className,
+  external = false,
+  ...attrs
+} = Astro.props;
+
+const isExternal = () => {
+  if (external) return true;
+  if (target && target !== "_self") return true;
+  if (rel === "external") return true;
+
+  // tel or mailto or https
+  if (href?.match(/^\w+:/)) return true;
+
+  // protocoless
+  if (href?.match(/^\/\//)) return true;
+
+  return false;
+};
+---
+
+<a
+  href={href}
+  target={isExternal() ? "_blank" : target}
+  rel={isExternal() ? "noreferrer" : rel}
+  class={className}
+  {...attrs}
+  ><slot />
+</a>
