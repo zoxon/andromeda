@@ -1,0 +1,45 @@
+---
+import { stringifySrcset, stringifySizes } from '@/helpers/image'
+import type { ClassName } from '@/types'
+
+export interface ImageSizes {
+  size: string
+  media?: string
+}
+
+export interface ImageSrcset {
+  [key: string]: string
+}
+
+export interface Props {
+  src: string
+  alt: string
+  srcSet?: ImageSrcset
+  sizes?: ImageSizes[]
+  class?: ClassName
+  width?: string | number
+  height?: string | number
+  responsive?: boolean
+}
+
+const {
+  src: source = '',
+  srcSet: sourceSet = {},
+  sizes = [],
+  alt = '',
+  class: className,
+  responsive = false,
+  ...properties
+} = Astro.props
+
+const classList = [{ 'w-full': responsive }, className]
+---
+
+<img
+  src={source}
+  alt={alt}
+  srcset={stringifySrcset(sourceSet)}
+  sizes={stringifySizes(sizes)}
+  class:list={classList}
+  {...properties}
+/>
