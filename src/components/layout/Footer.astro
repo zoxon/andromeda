@@ -1,5 +1,11 @@
 ---
-const {} = Astro.props
+import Container from '@/components/base/Container.astro'
+
+const { class: className } = Astro.props
+
+const year = new Date().getFullYear()
 ---
 
-<footer>Footer</footer>
+<footer class:list={['text-center bg-gray-100 py-6 text-sm text-gray-400', className]}>
+  <Container>&copy; {year} Velichko Konstantin</Container>
+</footer>

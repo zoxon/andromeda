@@ -1,21 +1,21 @@
 ---
 export interface Props {
-  title: string;
-  class?: string;
+  title: string
+  class?: string
 }
 
-const { title, class: className } = Astro.props;
+const { title, class: className, 'class:list': classList } = Astro.props
 ---
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
   </head>
-  <body class={className}>
+  <body class:list={[className, classList]}>
     <slot />
   </body>
 </html>

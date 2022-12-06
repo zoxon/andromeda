@@ -14,9 +14,11 @@ const { title, class: className } = Astro.props
 ---
 
 <BaseLayout title={title} class:list={['flex flex-col min-h-screen', className]}>
-  <Header />
+  <Header class="fixed inset-x-0 top-0 z-header" />
 
-  <slot />
+  <main class="pt-32 pb-10 flex-1">
+    <slot />
+  </main>
 
   <Footer />
 </BaseLayout>

@@ -1,6 +1,8 @@
 ---
 import Link from '@/components/base/Link.astro'
 import type { ClassName } from '@/types'
+import Image from '@/components/base/Image.astro'
+import astroIcon from '@/assets/images/logo/astro.svg'
 
 export interface Props {
   class?: ClassName
@@ -9,4 +11,7 @@ export interface Props {
 const { class: className } = Astro.props
 ---
 
-<Link href="/" class:list={['font-black', className]}>Andromeda</Link>
+<Link href="/" class:list={['flex items-center gap-2', className]}>
+  <Image src={astroIcon} alt="Astro" aria-hidden="true" class="w-8 h-8" />
+  <span class="font-bold text-gray-800 text-xl">Andromeda</span>
+</Link>

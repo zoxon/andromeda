@@ -1,11 +1,10 @@
 ---
+import Container from '@/components/base/Container.astro'
 import DefaultLayout from '@/layouts/Default.astro'
 ---
 
-<DefaultLayout title="Home page" class="bg-gray-200">
-  <main>
-    <main class="flex-1">
-      <h1 class="text-3xl">Home page</h1>
-    </main>
-  </main>
+<DefaultLayout title="Home page">
+  <Container>
+    <h1 class="text-3xl">Home page</h1>
+  </Container>
 </DefaultLayout>
