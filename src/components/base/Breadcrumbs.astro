@@ -1,0 +1,34 @@
+---
+import type { ClassName } from '@/types'
+
+interface Item {
+  title: string
+  link?: {
+    href: string
+  }
+}
+
+export interface Props {
+  items: Item[]
+  class?: ClassName
+}
+
+const { items = [], class: className } = Astro.props
+---
+
+<ul class:list={['flex gap-2 text-gray-500', className]}>
+  {
+    items &&
+      items.map((item) => (
+        <li class="after:content-['>'] after:last:hidden">
+          {item.link ? (
+            <a class=" hover:underline" {...item.link}>
+              {item.title}
+            </a>
+          ) : (
+            item.title
+          )}
+        </li>
+      ))
+  }
+</ul>
