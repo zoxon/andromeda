@@ -1,0 +1,77 @@
+---
+import Source from '@/components/base/Source.astro'
+import Button from '@/components/base/Button.astro'
+import Image from '@/components/base/Image.astro'
+import buttonBg from '@/assets/images/video/play.svg'
+
+import type { ClassName } from '@/types'
+import type { Props as SourceProps } from '@/components/base/Source.astro'
+
+export interface Props {
+  title: string
+  poster?: string
+  source?: SourceProps[]
+  width?: string | number
+  height?: string | number
+  controls?: boolean
+  muted?: boolean
+  class?: ClassName
+}
+
+const { poster, title, width, height, source = [], controls = true, muted = false, class: className } = Astro.props
+---
+
+<div class:list={['relative rounded-xl overflow-hidden', className]} data-component="video">
+  <Button
+    class={`bg-[#F4F4F4] absolute inset-0 z-10 after:bg-[url('${buttonBg}')] after:bg-center after:bg-no-repeat after:z-10 after:origin-center after:transition-all hover:after:scale-150 after:w-[60px] after:h-[60px] after:absolute after:inset-auto`}
+    data-ref="button"
+  >
+    {poster && <Image src={poster} alt={title} class="w-full" />}
+  </Button>
+
+  <video
+    data-ref="video"
+    class="w-full aspect-video"
+    poster={poster}
+    width={width}
+    height={height}
+    title={title}
+    controls={controls}
+    muted={muted}
+  >
+    <slot>{source && source.map((s) => <Source src={s.src} type={s.type} />)}</slot>
+    Video is not supported in this browser
+  </video>
+</div>
+
+<script>
+  import { Component, initComponent } from '@/helpers/components'
+
+  class VideoComponent extends Component {
+    bindEvents() {
+      this.refs.button?.addEventListener('click', (event) => this.onButtonClick(event))
+    }
+
+    hidePreview() {
+      if (this.refs.button) {
+        this.refs.button.style.display = 'none'
+      }
+    }
+
+    playVideo() {
+      const video = this.refs.video as HTMLVideoElement
+      if (video && video.play && typeof video.play === 'function') {
+        video.play()
+      }
+    }
+
+    onButtonClick(event: Event) {
+      event.preventDefault()
+
+      this.hidePreview()
+      this.playVideo()
+    }
+  }
+
+  initComponent('video', VideoComponent)
+</script>
