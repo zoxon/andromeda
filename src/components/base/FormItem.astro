@@ -1,0 +1,65 @@
+---
+import type { ClassName } from '@/types'
+
+export interface Props {
+  label?: string
+  description?: string
+  error?: string
+  responsive?: boolean
+  required?: boolean
+  optional?: boolean
+  for?: string
+  class?: ClassName
+}
+
+const {
+  label = '',
+  description,
+  error,
+  responsive = false,
+  required = false,
+  optional = false,
+  for: htmlFor = '',
+  class: className,
+} = Astro.props
+---
+
+<div class:list={['', className]}>
+  <div class:list={['flex flex-col gap-2', { 'md:flex-row md:items-start md:gap-4': responsive }]}>
+    <div class:list={{ 'shrink-0 md:w-1/3 md:pt-4': responsive }}>
+      <slot name="label">
+        {
+          label && (
+            <label class="block select-none text-sm font-medium" for={htmlFor}>
+              <span>{label}</span>
+              {required && <sup class="text-alert-red ml-1">*</sup>}
+              {optional && <span class="text-light-grey ml-1 text-xs italic">(optional)</span>}
+            </label>
+          )
+        }
+      </slot>
+    </div>
+
+    <div class:list={{ 'md:w-2/3': responsive }}>
+      <slot name="default" />
+    </div>
+  </div>
+
+  {
+    Astro.slots.description ||
+      error ||
+      (description && (
+        <div
+          class:list={[
+            'mt-2 w-full',
+            {
+              "md:flex md:before:mr-4 md:before:block md:before:w-1/3 md:before:shrink-0 md:before:content-['']":
+                responsive,
+            },
+          ]}
+        >
+          <slot name="description" />
+        </div>
+      ))
+  }
+</div>

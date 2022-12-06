@@ -1,0 +1,101 @@
+---
+import type { ClassName } from '@/types'
+
+const TextfieldSize = {
+  small: 'small',
+  medium: 'medium',
+  large: 'large',
+} as const
+
+type TextfieldSize = typeof TextfieldSize[keyof typeof TextfieldSize]
+
+type HTMLInputTypeAttribute =
+  | 'text'
+  | 'tel'
+  | 'email'
+  | 'url'
+  | 'password'
+  | 'number'
+  | 'search'
+  | 'hidden'
+  | 'date'
+  | 'datetime-local'
+  | 'month'
+  | 'time'
+  | 'week'
+  | 'color'
+
+export interface Props {
+  // Base
+  name?: string
+  id?: string
+  value?: string
+  disabled?: boolean
+  placeholder?: string
+  autocomplete?: string
+  readOnly?: boolean
+  required?: boolean
+
+  // Input
+  type?: HTMLInputTypeAttribute | undefined | null
+  max?: string
+  min?: string
+  pattern?: string
+  step?: string
+
+  // Textarea
+  cols?: number
+  rows?: number
+
+  // Component
+  multiline?: boolean
+  rounded?: boolean
+  size?: TextfieldSize
+  class?: ClassName
+}
+
+const { multiline = false, size, type = 'text', rounded, class: className, ...attributes } = Astro.props
+
+const sizeClasses = () => {
+  switch (size) {
+    case TextfieldSize.small: {
+      return 'px-4 py-2 text-sm'
+    }
+
+    case TextfieldSize.medium: {
+      return 'px-5 py-3 text-base'
+    }
+
+    case TextfieldSize.large: {
+      return ''
+    }
+
+    default: {
+      break
+    }
+  }
+}
+
+const classList = [
+  'textfield',
+  sizeClasses(),
+  {
+    rounded: rounded,
+  },
+  className,
+]
+---
+
+{
+  multiline ? (
+    <textarea class:list={classList} {...attributes} />
+  ) : (
+    <input type={type} class:list={classList} {...attributes} />
+  )
+}
+
+<style is:global>
+  .textfield {
+    @apply border-gray-300 bg-white text-base font-normal read-only:bg-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30 read-only:focus:border-gray-200 read-only:focus:ring-transparent;
+  }
+</style>

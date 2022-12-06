@@ -1,0 +1,72 @@
+---
+import type { ClassName } from '@/types'
+
+const SelectSize = {
+  small: 'small',
+  medium: 'medium',
+  large: 'large',
+} as const
+
+type SelectSize = typeof SelectSize[keyof typeof SelectSize]
+
+export interface Props {
+  // Base
+  name?: string
+  id?: string
+  value?: string
+  disabled?: boolean
+  placeholder?: string
+  autocomplete?: string
+  readOnly?: boolean
+  required?: boolean
+
+  // Select
+  size?: number | string | undefined | null
+
+  // Component
+  multiple?: boolean
+  rounded?: boolean
+  class?: ClassName
+}
+
+const { size, rounded, class: className, ...attributes } = Astro.props
+
+const sizeClasses = () => {
+  switch (size) {
+    case SelectSize.small: {
+      return 'px-4 py-2 text-sm'
+    }
+
+    case SelectSize.medium: {
+      return 'px-5 py-3 text-base'
+    }
+
+    case SelectSize.large: {
+      return ''
+    }
+
+    default: {
+      break
+    }
+  }
+}
+
+const classList = [
+  'select',
+  sizeClasses(),
+  {
+    rounded: rounded,
+  },
+  className,
+]
+---
+
+<select class:list={classList} {...attributes}>
+  <slot />
+</select>
+
+<style is:global>
+  .select {
+    @apply border-gray-300  bg-white text-base font-normal focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-30 disabled:bg-gray-200 disabled:focus:border-gray-200 disabled:focus:ring-transparent;
+  }
+</style>
