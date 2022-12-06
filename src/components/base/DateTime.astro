@@ -1,0 +1,20 @@
+---
+import { format, parseISO } from 'date-fns'
+import type { ClassName } from '@/types'
+
+export interface Props {
+  value: string | Date
+  template?: string
+  class?: ClassName
+}
+
+const { value = new Date(), template = 'd MMM yyyy k:mm', class: className } = Astro.props
+
+const parsedDate = typeof value === 'string' ? parseISO(value) : value
+const formattedDate = parsedDate.toString() !== 'Invalid Date' ? format(parsedDate, template) : ''
+const datetime = typeof value === 'string' ? value : value.toISOString()
+---
+
+<time class:list={['', className]} datetime={datetime}>
+  {formattedDate}
+</time>
