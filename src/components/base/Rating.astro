@@ -1,0 +1,60 @@
+---
+import type { ClassName } from '@/types'
+
+export interface Props {
+  value: number
+  max?: number
+  theme?: string
+  class?: ClassName
+}
+
+const { value = 0, max = 5, theme = 'star', class: className } = Astro.props
+
+const title = () => `Rating is ${value} from ${max}`
+const itemPercentage = (value / max) * 100
+const barStyle = `width: ${itemPercentage}%;`
+const items = [...Array.from({ length: max }).keys()].map((index) => ++index)
+---
+
+<div class:list={['rating', `rating--theme-${theme}`, className]}>
+  {items.map(() => <div class="rating__item" />)}
+
+  <div class="rating__bar" style={barStyle}>
+    {items.map(() => <div class="rating__bar-item" />)}
+  </div>
+
+  <span class="sr-only">{title}</span>
+</div>
+
+<style is:global>
+  .rating {
+    @apply relative inline-flex items-center;
+
+    &__bar {
+      @apply inline-flex items-center;
+    }
+
+    &__item,
+    &__bar-item {
+      @apply bg-center bg-no-repeat;
+      background-size: auto 100%;
+    }
+
+    &__bar {
+      @apply absolute inset-0 flex-nowrap overflow-hidden whitespace-nowrap;
+    }
+
+    &--theme-star &__item,
+    &--theme-star &__bar-item {
+      @apply mx-[2px] h-6 w-6 shrink-0;
+    }
+
+    &--theme-star &__item {
+      background-image: url('/src/assets/images/rating/unactive.svg');
+    }
+
+    &--theme-star &__bar-item {
+      background-image: url('/src/assets/images/rating/active.svg');
+    }
+  }
+</style>
