@@ -1,0 +1,45 @@
+---
+import qrcode from 'qrcode'
+import type { QRCodeErrorCorrectionLevel, QRCodeToStringOptions } from 'qrcode'
+import type { ClassName } from '@/types'
+
+export interface Props {
+  text: string
+  errorCorrectionLevel?: QRCodeErrorCorrectionLevel
+  margin?: number
+  width?: number
+  background?: string
+  foreground?: string
+  class?: ClassName
+}
+
+const {
+  text = '',
+  errorCorrectionLevel = 'L',
+  margin = 0,
+  width = 0,
+  background = '#00000000',
+  foreground = '#000000ff',
+  class: className,
+} = Astro.props
+
+async function generateSvg() {
+  try {
+    const options: QRCodeToStringOptions = {
+      type: 'svg',
+      errorCorrectionLevel: errorCorrectionLevel,
+      color: { dark: foreground, light: background },
+      margin,
+      width,
+    }
+
+    return await qrcode.toString(text, options)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const svg = await generateSvg()
+---
+
+<div class:list={className} title={text} set:html={svg} />
