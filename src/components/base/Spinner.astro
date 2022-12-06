@@ -1,0 +1,17 @@
+---
+import type { ClassName } from '@/types'
+
+export interface Props {
+  class?: ClassName
+}
+
+const { class: className } = Astro.props
+---
+
+<div
+  class:list={[
+    'class="inline-block animate-spin before:block before:w-full before:h-full before:border-current before:border-4 before:border-r-transparent before:rounded-full w-6 h-6',
+    className,
+  ]}
+>
+</div>
