@@ -1,0 +1,105 @@
+---
+import { Sprite } from 'astro-icon'
+import type { ClassName } from '@/types'
+
+export interface Props {
+  current?: number
+  total?: number
+  limit?: number
+  class?: ClassName
+}
+
+function paging({ current, total, limit }: { current: number; total: number; limit: number }): (string | number)[] {
+  if (total <= 1) {
+    return []
+  }
+
+  limit = limit - 2
+
+  const indexes: (string | number)[] = ['1']
+  let start = Math.round(current - limit / 2)
+  let end = Math.round(current + limit / 2)
+
+  if (start <= 1) {
+    start = 2
+    end = start + limit - 1
+    if (end >= total - 1) {
+      end = total - 1
+    }
+  }
+
+  if (end >= total - 1) {
+    end = total - 1
+    start = end - limit + 1
+    if (start <= 1) {
+      start = 2
+    }
+  }
+
+  if (start !== 2) indexes.push('...')
+
+  for (let index = start; index <= end; index++) {
+    indexes.push(index)
+  }
+
+  if (end !== total - 1) {
+    indexes.push('...')
+  }
+
+  indexes.push(total)
+
+  return indexes
+}
+
+const { current = 1, total = 10, limit = 5, class: className } = Astro.props
+
+const pagingList = paging({
+  current,
+  total,
+  limit,
+})
+---
+
+<div class:list={['inline-flex items-center', className]}>
+  <a
+    href="#"
+    class="p-2 min-w-[2.5rem] min-h-[2.5rem] text-center flex items-center justify-center hover:bg-secondary-light-grey transition-colors rounded-md"
+  >
+    <Sprite name="arrow-left" class="w-5 h-5" />
+    <span class="sr-only">Previous page</span>
+  </a>
+
+  {
+    pagingList &&
+      pagingList.map((item) => {
+        if (current.toString() === item.toString()) {
+          return (
+            <span class="flex min-h-[2.5rem] min-w-[2.5rem] items-center justify-center rounded-md bg-blue-500 p-2 text-center font-medium text-white">
+              {item}
+            </span>
+          )
+        }
+
+        if (item === '...') {
+          return <span class="flex min-h-[2.5rem] min-w-[2.5rem] items-center justify-center p-2 text-center">...</span>
+        }
+
+        return (
+          <a
+            href="#"
+            class="hover:bg-secondary-light-grey flex min-h-[2.5rem] min-w-[2.5rem] items-center justify-center rounded-md p-2 text-center transition-colors"
+          >
+            {item}
+          </a>
+        )
+      })
+  }
+
+  <a
+    href="#"
+    class="p-2 min-w-[2.5rem] min-h-[2.5rem] text-center flex items-center justify-center hover:bg-secondary-light-grey transition-colors rounded-md"
+  >
+    <Sprite name="arrow-right" class="w-5 h-5" />
+    <span class="sr-only">Next page</span>
+  </a>
+</div>
