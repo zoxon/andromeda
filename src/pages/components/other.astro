@@ -1,0 +1,39 @@
+---
+import DefaultLayout from '@/layouts/Default.astro'
+import Container from '@/components/base/Container.astro'
+import Breadcrumbs from '@/components/base/Breadcrumbs.astro'
+import DateTime from '@/components/base/DateTime.astro'
+import Pagination from '@/components/base/Pagination.astro'
+import Qrcode from '@/components/base/Qrcode.astro'
+import Rating from '@/components/base/Rating.astro'
+import Spinner from '@/components/base/Spinner.astro'
+import Video from '@/components/base/Video.astro'
+---
+
+<DefaultLayout title="Form components">
+  <Container tag="main" class="flex-1">
+    <h1 class="text-3xl font-bold mb-4">Form</h1>
+
+    <div class="flex flex-col gap-4">
+      <Video />
+
+      <Breadcrumbs
+        items={[
+          { title: 'Home', link: { href: '/' } },
+          { title: 'Components', link: { href: '/components' } },
+          { title: 'Breadcrumbs' },
+        ]}
+      />
+
+      <DateTime value="2022-07-22T12:23" />
+
+      <Pagination />
+
+      <Qrcode text="Text in QR code" class="w-32 h-32" />
+
+      <Rating value={2.5} />
+
+      <Spinner />
+    </div>
+  </Container>
+</DefaultLayout>

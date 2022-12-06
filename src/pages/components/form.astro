@@ -1,0 +1,70 @@
+---
+import DefaultLayout from '@/layouts/Default.astro'
+import Container from '@/components/base/Container.astro'
+import Alert, { AlertType } from '@/components/base/Alert.astro'
+import FormItem from '@/components/base/FormItem.astro'
+import Select from '@/components/base/Select.astro'
+import Textfield from '@/components/base/Textfield.astro'
+
+const alertTypes: AlertType[] = ['info', 'error', 'notice', 'success', 'warning']
+---
+
+<DefaultLayout title="Form components">
+  <Container tag="main" class="flex-1">
+    <h1 class="text-3xl font-bold mb-4">Form</h1>
+
+    <h2>Alerts</h2>
+    <div class="space-y-4">
+      {
+        alertTypes.map((type) => (
+          <Alert type={type} title="Alert">
+            <p>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Beatae, ea corrupti incidunt aut ullam iste atque
+              dolores molestias inventore voluptas tenetur necessitatibus vel assumenda adipisci non ratione. Ea,
+              laboriosam. Necessitatibus.
+            </p>
+          </Alert>
+        ))
+      }
+    </div>
+
+    <h2>Inputs</h2>
+    <div class="space-y-4">
+      <FormItem label="Text">
+        <Textfield type="text" class="w-full rounded" />
+      </FormItem>
+
+      <FormItem label="Textarea">
+        <Textfield multiline class="w-full rounded" />
+      </FormItem>
+
+      <FormItem label="Select">
+        <Select class="w-full rounded" name="pets" id="pet-select">
+          <option value="">--Please choose an option--</option>
+          <option value="dog">Dog</option>
+          <option value="cat">Cat</option>
+          <option value="hamster">Hamster</option>
+          <option value="parrot">Parrot</option>
+          <option value="spider">Spider</option>
+          <option value="goldfish">Goldfish</option>
+        </Select>
+      </FormItem>
+
+      <FormItem label="Select multiple">
+        <Select class="w-full rounded" name="pets2" id="pet-select2" multiple>
+          <option value="" selected>--Please choose an option--</option>
+          <optgroup label="4-legged pets">
+            <option value="dog">Dog</option>
+            <option value="cat">Cat</option>
+            <option value="hamster" disabled>Hamster</option>
+          </optgroup>
+          <optgroup label="Flying pets">
+            <option value="parrot">Parrot</option>
+            <option value="macaw">Macaw</option>
+            <option value="albatross">Albatross</option>
+          </optgroup>
+        </Select>
+      </FormItem>
+    </div>
+  </Container>
+</DefaultLayout>
