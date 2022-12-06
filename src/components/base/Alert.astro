@@ -1,0 +1,74 @@
+---
+import type { ClassName } from '@/types'
+
+const AlertType = {
+  info: 'info',
+  error: 'error',
+  notice: 'notice',
+  success: 'success',
+  warning: 'warning',
+} as const
+
+export type AlertType = typeof AlertType[keyof typeof AlertType]
+
+export interface Props {
+  type?: AlertType
+  icon?: string
+  title?: string
+  text?: string
+  class?: ClassName
+}
+
+const { type, icon, title = '', text = '', class: className, ...attributes } = Astro.props
+
+const typeClass = () => {
+  switch (type) {
+    case AlertType.info: {
+      return 'bg-[#F7F8F9] text-primary'
+    }
+
+    case AlertType.notice: {
+      return 'bg-[#ECF5FF] text-primary'
+    }
+
+    case AlertType.error: {
+      return 'bg-[#FF3D00] bg-opacity-10 border-[#FF3D00] text-alert-[#FF3D00]'
+    }
+
+    case AlertType.success: {
+      return 'bg-[#10A210] bg-opacity-10 border-[#10A210] text-alert-[#10A210]'
+    }
+
+    case AlertType.warning: {
+      return 'bg-[#FE9A01] bg-opacity-10 border-[#FE9A01] text-[#FE9A01]'
+    }
+
+    default: {
+      return ''
+    }
+  }
+}
+---
+
+<div class:list={['rounded py-5 px-6 text-sm sm:text-base', typeClass(), className]} {...attributes}>
+  {
+    (!!title || Astro.slots.has('title')) && (
+      <div class="mb-4 flex items-center space-x-3">
+        <slot name="icon">{icon && <Sprite name={icon} class="h-5 w-5" />}</slot>
+        <slot name="title">{title && <p class="text-lg font-bold">{title}</p>}</slot>
+      </div>
+    )
+  }
+
+  {
+    (!!text || Astro.slots.has('default')) && (
+      <div class:list={{ 'pl-8': icon }}>
+        <slot name="default">
+          <p v-if="text" class="text-sm">
+            {text}
+          </p>
+        </slot>
+      </div>
+    )
+  }
+</div>
