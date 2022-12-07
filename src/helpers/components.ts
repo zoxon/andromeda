@@ -3,10 +3,12 @@ import { EventBus } from '@/helpers/eventbus'
 
 const events = new EventBus()
 
+type ReferenceElement = HTMLElement | null | undefined
+
 export class Component {
   name: string
   element: HTMLElement
-  refs: Record<string, HTMLElement | null | undefined>
+  refs: Record<string, ReferenceElement>
   options: Record<string, any>
   events: EventBus
 
@@ -43,18 +45,18 @@ export class Component {
   }
 
   initRefs() {
-    const allRefsElements = this.element.querySelectorAll<HTMLElement>('[data-ref]:not([data-ref=""]')
-    const elements = [this.element, ...allRefsElements]
+    const allReferencesElements = this.element.querySelectorAll<HTMLElement>('[data-ref]')
+    const elements = [this.element, ...allReferencesElements]
 
     for (const element of elements) {
-      const refName = element.dataset.ref
-      const isPrefixedRef = refName?.includes(':')
+      const referenceName = element.dataset.ref
+      const isPrefixedReference = referenceName?.includes(':')
 
-      if (!refName) continue
+      if (!referenceName) continue
 
       // Support ref prefix like data-ref="component-name:ref-name"
-      if (isPrefixedRef) {
-        let [prefix, name] = refName.split(':')
+      if (isPrefixedReference) {
+        const [prefix, name] = referenceName.split(':')
 
         if (prefix == this.name) {
           this.refs[camelCase(name)] = element
@@ -63,7 +65,7 @@ export class Component {
       }
 
       // Support global refs data-ref="global-ref-name"
-      this.refs[camelCase(refName)] = element
+      this.refs[camelCase(referenceName)] = element
     }
   }
 

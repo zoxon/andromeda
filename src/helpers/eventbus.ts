@@ -1,6 +1,6 @@
-type Registry = Record<string, Function[]>
+type Callable = (...arguments_: any[]) => void
 
-type Callable = (...args: any[]) => void
+type Registry = Record<string, Callable[]>
 
 export class EventBus {
   events: Registry = {}
@@ -29,8 +29,8 @@ export class EventBus {
     }
 
     // Cycle through events queue
-    this.events[event].forEach((item) => {
+    for (const item of this.events[event]) {
       item(context || {})
-    })
+    }
   }
 }
