@@ -22,7 +22,7 @@ const { poster, title, width, height, source = [], controls = true, muted = fals
 
 <div class:list={['relative rounded-xl overflow-hidden', className]} data-component="video">
   <Button
-    class={`bg-[#F4F4F4] absolute inset-0 z-10 after:bg-[url('/src/assets/images/video/play.svg')] after:bg-center after:bg-no-repeat after:z-10 after:origin-center after:transition-all hover:after:scale-150 after:w-[60px] after:h-[60px] after:absolute after:inset-auto`}
+    class={`bg-gray-50 absolute inset-0 z-10 after:bg-[url('/src/assets/images/video/play.svg')] after:bg-center after:bg-no-repeat after:z-10 after:origin-center after:transition-all hover:after:scale-150 after:w-[60px] after:h-[60px] after:absolute after:inset-auto`}
     data-ref="button"
   >
     {poster && <Image src={poster} alt={title} class="w-full" />}
