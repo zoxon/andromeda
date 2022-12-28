@@ -1,11 +1,18 @@
 ---
-import BaseLayout from "@/layouts/Base.astro";
+import BaseLayout from '@/layouts/Base.astro'
+import Button from '@/components/base/Button.astro'
+import Container from '@/components/base/Container.astro'
 ---
 
-<BaseLayout title="Home page" class="bg-gray-200">
-  <main class="grid place-items-center h-screen content-center">
-    <h1 class="text-8xl mb-4">404</h1>
-    <p class="text-2xl">Page not found</p>
-    <a href="/" class="p-4 underline hover:no-underline">Return to home page</a>
-  </main>
+<BaseLayout title="404 Page not found">
+  <Container class="box-border h-screen flex">
+    <main class="max-w-[550px] text-center text-gray-800 py-16 m-auto">
+      <h1 class="text-[170px] leading-[1] mb-8 font-bold">404</h1>
+      <h2 class="font-semibold text-3xl mb-5">Sorry, the page can't be found</h2>
+      <p class="mb-10 text-gray-400">
+        The page you were looking for appears to have been moved, deleted or does not exist.
+      </p>
+      <Button color="blue" theme="solid" size="2xl" rounded href="/">Back to Home</Button>
+    </main>
+  </Container>
 </BaseLayout>
