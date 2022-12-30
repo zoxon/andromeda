@@ -23,13 +23,13 @@ const { poster, title, width, height, source = [], controls = true, muted = fals
 <div class:list={['relative rounded-xl overflow-hidden', className]} data-component="video">
   <Button
     class={`bg-gray-50 absolute inset-0 z-10 after:bg-[url('/src/assets/images/video/play.svg')] after:bg-center after:bg-no-repeat after:z-10 after:origin-center after:transition-all hover:after:scale-150 after:w-[60px] after:h-[60px] after:absolute after:inset-auto`}
-    data-ref="button"
+    data-ref="video:button"
   >
     {poster && <Image src={poster} alt={title} class="w-full" />}
   </Button>
 
   <video
-    data-ref="video"
+    data-ref="video:video"
     class="w-full aspect-video"
     poster={poster}
     width={width}
@@ -48,17 +48,18 @@ const { poster, title, width, height, source = [], controls = true, muted = fals
 
   class VideoComponent extends Component {
     bindEvents() {
-      this.refs.button?.addEventListener('click', (event) => this.onButtonClick(event))
+      this.get<HTMLButtonElement>('button')?.addEventListener('click', (event) => this.onButtonClick(event))
     }
 
     hidePreview() {
-      if (this.refs.button) {
-        this.refs.button.style.display = 'none'
+      const button = this.get<HTMLButtonElement>('button')
+      if (button) {
+        button.style.display = 'none'
       }
     }
 
     playVideo() {
-      const video = this.refs.video as HTMLVideoElement
+      const video = this.get<HTMLVideoElement>('video')
       if (video && video.play && typeof video.play === 'function') {
         video.play()
       }
