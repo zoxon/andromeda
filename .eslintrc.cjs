@@ -33,6 +33,10 @@ module.exports = {
       rules: {
         // override/add rules settings here, such as:
         // "astro/no-set-html-directive": "error"
+        'unicorn/filename-case': false,
+        'jsx-a11y/anchor-is-valid': false,
+        'no-redeclare': false,
+        'jsx-a11y/media-has-caption': false,
       },
     },
   ],
