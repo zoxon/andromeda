@@ -14,8 +14,8 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:unicorn/recommended',
     'plugin:jsx-a11y/recommended',
+    'plugin:prettier/recommended',
     'plugin:astro/recommended',
-    'plugin:prettier/recommended', // Prettier always goes last
   ],
 
   overrides: [
@@ -33,25 +33,7 @@ module.exports = {
       rules: {
         // override/add rules settings here, such as:
         // "astro/no-set-html-directive": "error"
-        'prettier/prettier': 'off',
       },
     },
   ],
-
-  rules: {
-    'unicorn/prevent-abbreviations': [
-      'error',
-      {
-        extendDefaultAllowList: true,
-        allowList: {
-          env: true,
-          Props: true,
-        },
-      },
-    ],
-    'unicorn/filename-case': 0,
-    'jsx-a11y/anchor-is-valid': 0,
-    'no-redeclare': 0,
-    'jsx-a11y/media-has-caption': 0,
-  },
 }

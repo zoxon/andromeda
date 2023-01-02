@@ -12,5 +12,8 @@
     "typescriptreact", // Enable .tsx
     "html"
   ],
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "[astro]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
