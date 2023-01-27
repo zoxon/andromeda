@@ -2,7 +2,6 @@ import type { ImageSrcset, ImageSizes } from '@/components/base/Image.astro'
 import { isObject } from '@/helpers/is'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
 export function stringifySrcset(srcset: ImageSrcset) {
   if (isObject(srcset)) {
     return (
