@@ -1,4 +1,5 @@
 ---
+import { Sprite } from 'astro-icon'
 export interface Props {
   title: string
   class?: string
@@ -15,7 +16,9 @@ const { title, class: className, 'class:list': classList } = Astro.props
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{title}</title>
   </head>
-  <body class:list={[className, classList]}>
-    <slot />
+  <body class:list={['font-sans', className, classList]}>
+    <Sprite.Provider>
+      <slot />
+    </Sprite.Provider>
   </body>
 </html>

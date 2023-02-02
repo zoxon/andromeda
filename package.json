@@ -20,7 +20,6 @@
   },
   "dependencies": {
     "astro": "^1.8.0",
-    "astro-icon": "^0.8.0",
     "change-case": "^4.1.2",
     "date-fns": "^2.29.3",
     "slide-anim": "^1.4.0",
@@ -38,6 +37,7 @@
     "@types/three": "^0.147.1",
     "@typescript-eslint/eslint-plugin": "^5.47.1",
     "@typescript-eslint/parser": "^5.47.1",
+    "astro-icon": "^0.8.0",
     "autoprefixer": "^10.4.13",
     "eslint": "^8.31.0",
     "eslint-config-prettier": "^8.5.0",
