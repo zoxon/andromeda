@@ -1,0 +1,78 @@
+---
+import { Sprite } from 'astro-icon'
+import type { ClassName } from '@/types'
+import Button from '@/components/base/Button.astro'
+
+export interface Props {
+  closable?: boolean
+  class?: ClassName
+}
+
+const { closable = true, class: className } = Astro.props
+---
+
+<div class:list={['dialog', className]}>
+  {
+    Astro.slots.has('header') && (
+      <div class="dialog__header">
+        <slot name="header" />
+      </div>
+    )
+  }
+
+  {
+    Astro.slots.has('default') && (
+      <div class="dialog__body">
+        <slot />
+      </div>
+    )
+  }
+
+  {
+    Astro.slots.has('footer') && (
+      <div class="dialog__footer">
+        <slot name="footer" />
+      </div>
+    )
+  }
+
+  {
+    closable && (
+      <Button class="dialog__close" data-modal-close>
+        <Sprite name="close" class="dialog__close-icon" />
+        <span class="sr-only">Close this dialog</span>
+      </Button>
+    )
+  }
+</div>
+
+<style is:global>
+  .dialog {
+    background-color: #fff;
+    padding: 30px;
+    max-width: 500px;
+    max-height: 100vh;
+    border-radius: 4px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    gap: 24px;
+    flex-direction: column;
+
+    &__close {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 48px;
+      height: 48px;
+      background: transparent;
+    }
+
+    &__close-icon {
+      width: 20px;
+      height: 20px;
+      @apply fill-gray-400 shadow-none;
+    }
+  }
+</style>

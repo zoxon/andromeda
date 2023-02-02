@@ -57,7 +57,7 @@ export class Component {
   }
 
   getAll<E extends Element>(name: string) {
-    return [...this.element.querySelectorAll<E>(`[data-ref="${this.name}:${name}"]`)]
+    return Array.from(this.element.querySelectorAll<E>(`[data-ref="${this.name}:${name}"]`))
   }
 
   getInstance(element: ComponentRootElement): Component | undefined {

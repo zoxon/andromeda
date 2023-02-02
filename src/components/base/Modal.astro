@@ -12,7 +12,7 @@ const { id, title, class: className } = Astro.props
 
 <div class:list={['modal', className]} data-component="modal" data-id={id} aria-hidden="true">
   <div tabindex="-1" data-ref="modal:backdrop" class="modal__backdrop">
-    <div role="dialog" aria-modal="true" aria-label={title} class="modal__container">
+    <div role="dialog" aria-modal="true" aria-label={title} class="modal__container" data-ref="modal:container">
       <slot />
     </div>
   </div>
@@ -40,29 +40,22 @@ const { id, title, class: className } = Astro.props
     }
 
     &__container {
-      background-color: #fff;
-      padding: 30px;
-      max-width: 500px;
-      max-height: 100vh;
-      border-radius: 4px;
-      overflow-y: auto;
-      box-sizing: border-box;
     }
 
     &[aria-hidden='false'] .modal__backdrop {
-      animation: mmfadeIn 0.3s cubic-bezier(0, 0, 0.2, 1);
+      animation: modal-fade-in 0.3s cubic-bezier(0, 0, 0.2, 1);
     }
 
     &[aria-hidden='false'] .modal__container {
-      animation: mmslideIn 0.3s cubic-bezier(0, 0, 0.2, 1);
+      animation: modal-slide-in 0.3s cubic-bezier(0, 0, 0.2, 1);
     }
 
     &[aria-hidden='true'] .modal__backdrop {
-      animation: mmfadeOut 0.3s cubic-bezier(0, 0, 0.2, 1);
+      animation: modal-fade-out 0.3s cubic-bezier(0, 0, 0.2, 1);
     }
 
     &[aria-hidden='true'] .modal__container {
-      animation: mmslideOut 0.3s cubic-bezier(0, 0, 0.2, 1);
+      animation: modal-slide-out 0.3s cubic-bezier(0, 0, 0.2, 1);
     }
 
     &__container,
@@ -109,12 +102,30 @@ const { id, title, class: className } = Astro.props
 </style>
 
 <script>
+  // import { onAnimationEnd } from '@/helpers/animation'
   import { Component, initComponent } from '@/helpers/components'
   import { dispatchCustomEvent, listenEvent } from '@/helpers/events'
   import { scrollBehaviour } from '@/helpers/util'
 
+  function onAnimationEnd(element: HTMLElement, callback: (event: AnimationEvent) => void) {
+    return new Promise(function (resolve) {
+      function handler(event: AnimationEvent) {
+        element.removeEventListener('animationend', handler, false)
+        resolve(event)
+
+        if (typeof callback === 'function') {
+          callback(event)
+        }
+      }
+
+      element.addEventListener('animationend', handler, false)
+    })
+  }
+
   interface Modal {
     stack: string[]
+    container: HTMLElement | null
+    backdrop: HTMLElement | null
   }
 
   class Modal extends Component {
@@ -125,88 +136,28 @@ const { id, title, class: className } = Astro.props
     }
 
     buildCache() {
-      this.stack = []
+      this.container = this.get<HTMLElement>('container')
+      this.backdrop = this.get<HTMLElement>('backdrop')
     }
 
     bindEvents() {
       listenEvent('modal:show', (event) => {
-        this.push(event.detail)
+        if (event.detail === this.id) this.show(event.detail)
       })
 
-      listenEvent('modal:close', (event) => {
-        const id = event.detail
-
-        if (!id) {
-          this.pop()
-          return
-        }
-
-        this.remove(id)
+      listenEvent('modal:close', async () => {
+        await this.close()
       })
 
-      listenEvent('modal:replace', (event) => {
-        this.replace(event.detail)
-      })
-
-      const closeButtons = this.getAll('close')
-      if (closeButtons) {
-        closeButtons.forEach((close) => {
-          close.addEventListener('click', () => {
-            this.pop()
-          })
+      if (this.backdrop) {
+        this.backdrop.addEventListener('click', (event) => {
+          if (event.target === this.backdrop) this.close()
         })
       }
-
-      // Global event listners for buttons
-      document.addEventListener('click', (event) => {
-        if (!(event.target instanceof HTMLButtonElement)) return
-        if (!event.target.hasAttribute('data-modal-show')) return
-        if (!event.target.dataset.modalShow) return
-        dispatchCustomEvent('modal:show', event.target.dataset.modalShow)
-      })
-
-      document.addEventListener('click', (event) => {
-        if (!(event.target instanceof HTMLButtonElement)) return
-        if (!event.target.hasAttribute('data-modal-close')) return
-        dispatchCustomEvent('modal:close', event.target.dataset.modalClose)
-      })
-    }
-
-    get peek(): string | undefined {
-      return this.stack[this.stack.length - 1]
     }
 
     get id() {
       return this.element.dataset.id
-    }
-
-    push(id: string) {
-      this.stack.push(id)
-      this.showPeek()
-    }
-
-    pop() {
-      this.stack.pop()
-      this.showPeek()
-    }
-
-    replace(id: string) {
-      this.stack.pop()
-      this.stack.push(id)
-      this.showPeek()
-    }
-
-    remove(id: string) {
-      this.stack = this.stack.filter((modal) => modal !== id)
-      this.showPeek()
-    }
-
-    showPeek() {
-      if (this.peek && this.id && this.peek === this.id) {
-        this.show(this.id)
-      } else {
-        this.close()
-      }
     }
 
     show(id: string) {
@@ -215,12 +166,36 @@ const { id, title, class: className } = Astro.props
       scrollBehaviour('disable')
     }
 
-    close() {
+    async close() {
+      if (this.element.getAttribute('aria-hidden') === 'true') return
+
       this.element.setAttribute('aria-hidden', 'true')
-      this.element.classList.remove(this.options.openClass)
+
+      if (this.container) {
+        await onAnimationEnd(this.container, () => {
+          this.element.classList.remove(this.options.openClass)
+        })
+      }
+
       scrollBehaviour('enable')
     }
   }
 
   initComponent('modal', Modal)
+
+  // Global event listners for buttons
+  const buttons = Array.from(document.querySelectorAll<HTMLElement>('[data-modal-open], [data-modal-close]'))
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', () => {
+      if (button.hasAttribute('data-modal-open')) {
+        if (!button.dataset.modalOpen) return
+        return dispatchCustomEvent('modal:show', button.dataset.modalOpen)
+      }
+
+      if (button.hasAttribute('data-modal-close')) {
+        return dispatchCustomEvent('modal:close', button.dataset.modalClose)
+      }
+    })
+  })
 </script>
