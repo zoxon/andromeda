@@ -1,0 +1,242 @@
+---
+import type { Placement } from '@floating-ui/dom'
+import type { ClassName } from '@/types'
+
+export interface Props {
+  reference: string
+  placement?: Placement
+  theme?: 'dark' | 'light'
+  id?: string
+  class?: ClassName
+}
+
+const { reference, class: className, placement = 'top', theme = 'light', ...attrs } = Astro.props
+---
+
+<div
+  class:list={['tooltip', `tooltip_theme_${theme}`, className]}
+  {...attrs}
+  role="tooltip"
+  data-component="tooltip"
+  data-reference={reference}
+  data-placement={placement}
+>
+  <div class="tooltip__content">
+    <slot />
+  </div>
+  <div class="tooltip__arrow" data-ref="tooltip:arrow"></div>
+</div>
+
+<script>
+  import {
+    computePosition,
+    autoUpdate,
+    arrow as arrowMiddleware,
+    offset as offsetMiddleware,
+    shift as shiftMiddleware,
+    flip as flipMiddleware,
+  } from '@floating-ui/dom'
+  import type { ComputePositionConfig, Placement, Side } from '@floating-ui/dom'
+  import { Component, initComponent } from '@/helpers/components'
+
+  import { ready } from '@/helpers/dom'
+
+  class Tooltip extends Component {
+    get placement() {
+      return (this.element.dataset.placement as Placement) || 'top'
+    }
+
+    get reference(): HTMLElement | null {
+      const reference = this.element.dataset.reference
+
+      if (reference) {
+        return document.querySelector<HTMLElement>(reference)
+      }
+
+      // eslint-disable-next-line unicorn/no-null
+      return null
+    }
+
+    get arrow() {
+      return this.get<HTMLElement>('arrow')
+    }
+
+    async init() {
+      await this.initFloating(this.reference, this.element, this.arrow)
+    }
+
+    bindEvents() {
+      if (this.reference) {
+        this.reference.addEventListener('mouseover', () => this.element.setAttribute('aria-hidden', 'false'))
+        this.reference.addEventListener('mouseleave', () => this.element.setAttribute('aria-hidden', 'true'))
+      }
+    }
+
+    async initFloating(reference: HTMLElement | null, floating: HTMLElement | null, arrow: HTMLElement | null) {
+      if (!reference || !floating) {
+        return
+      }
+
+      const padding = arrow ? 20 : 12
+
+      const getConfig = () => {
+        const options: Partial<ComputePositionConfig> = {
+          strategy: 'fixed',
+          placement: this.placement,
+          middleware: [offsetMiddleware(padding), shiftMiddleware({ padding }), flipMiddleware()],
+        }
+
+        if (arrow) {
+          options.middleware = [
+            ...(options.middleware ?? []),
+            arrowMiddleware({
+              element: arrow as HTMLElement,
+              padding,
+            }),
+          ]
+        }
+
+        return options
+      }
+
+      const updatePosition = async () => {
+        const { x, y, placement, strategy, middlewareData } = await computePosition(
+          reference,
+          floating as HTMLElement,
+          getConfig()
+        )
+
+        // Update attribute
+        floating.dataset.placement = placement
+
+        // Update floating position
+        const floatingStyles: Partial<CSSStyleDeclaration> = {
+          position: strategy,
+          left: x ? `${x}px` : '',
+          top: y ? `${y}px` : '',
+        }
+        Object.assign(this.element.style, floatingStyles)
+
+        // Update arrow position
+        if (this.arrow && middlewareData.arrow) {
+          const { x: arrowX, y: arrowY } = middlewareData.arrow
+          const placementSide = placement.split('-')[0] as Side
+
+          const staticSide = {
+            top: 'bottom',
+            right: 'left',
+            bottom: 'top',
+            left: 'right',
+          }[placementSide]
+
+          const arrowStyles: Partial<CSSStyleDeclaration> = {
+            left: arrowX ? `${arrowX}px` : '',
+            top: arrowY ? `${arrowY}px` : '',
+            right: '',
+            bottom: '',
+            [staticSide]: `-${this.arrow.offsetHeight / 2}px`,
+          }
+
+          if (this.arrow) Object.assign(this.arrow.style, arrowStyles)
+        }
+      }
+
+      ready(async () => await updatePosition())
+
+      autoUpdate(reference, floating, updatePosition)
+    }
+  }
+
+  initComponent('tooltip', Tooltip)
+</script>
+
+<style is:global>
+  .tooltip {
+    position: fixed;
+    z-index: -9999;
+    margin: 0;
+    padding: 0;
+    font-weight: 400;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+    white-space: normal;
+    text-align: left;
+    text-transform: none;
+    text-decoration: none;
+    text-shadow: none;
+    word-wrap: break-word;
+    word-break: normal;
+    word-spacing: normal;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 125ms ease-in-out, visibility 100s linear;
+    line-break: auto;
+
+    &__arrow {
+      position: absolute;
+      z-index: 1;
+      width: 12px;
+      height: 12px;
+      transform: rotate(45deg);
+      pointer-events: none;
+    }
+
+    &__content {
+      box-sizing: border-box;
+      max-width: 320px;
+    }
+
+    &[aria-hidden='false'] {
+      z-index: var(--z-index-tooltip);
+      visibility: visible;
+      opacity: 1;
+    }
+
+    &[data-placement^='top'] .tooltip__arrow {
+      box-shadow: 2px 2px 1px 0 rgb(184 184 184 / 20%);
+    }
+
+    &[data-placement^='bottom'] .tooltip__arrow {
+      box-shadow: -1px -1px 1px 0 rgb(184 184 184 / 20%);
+    }
+
+    &[data-placement^='left'] .tooltip__arrow {
+      box-shadow: 2px -2px 1px 0 rgb(184 184 184 / 20%);
+    }
+
+    &[data-placement^='right'] .tooltip__arrow {
+      box-shadow: -2px 2px 1px 0 rgb(184 184 184 / 20%);
+    }
+
+    &_theme_light &__content {
+      padding: 12px;
+      font-size: 14px;
+      line-height: 20px;
+      text-align: center;
+      background-color: var(--color-light-grey);
+      border-radius: 5px;
+      box-shadow: 0 1px 3px 0 rgb(0 0 0 / 10%), 0 1px 2px 0 rgb(0 0 0 / 6%);
+    }
+
+    /* stylelint-disable no-descending-specificity */
+    &_theme_light &__arrow {
+      background-color: var(--color-light-grey);
+    }
+    /* stylelint-enable no-descending-specificity */
+  }
+
+  @keyframes tooltip-fade-in {
+    0% {
+      opacity: 0;
+    }
+
+    99% {
+      opacity: 1;
+    }
+
+    100% {
+      display: none;
+    }
+  }
+</style>
