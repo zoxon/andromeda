@@ -1,0 +1,33 @@
+---
+import Container from '@/components/base/Container.astro'
+import ColourSets, { Props as ColourSetsProps } from '@/features/colors/ColourSets.astro'
+import DefaultLayout from '@/layouts/Default.astro'
+import colors from '@/tokens/colors.json'
+import { capitalCase } from 'change-case'
+---
+
+<DefaultLayout title="Colors | Andromeda">
+  <Container>
+    <h1 class="text-3xl">Colors</h1>
+
+    {
+      Object.keys(colors).map((name) => {
+        const formattedName = capitalCase(name)
+
+        const items: ColourSetsProps['items'] = Object.keys(colors[name]).map((variation) => {
+          return {
+            name: `${formattedName} ${variation}`,
+            color: colors[name][variation].toUpperCase(),
+          }
+        })
+
+        return (
+          <div class="mb-10">
+            <h2 class="mb-4 text-2xl">{formattedName}</h2>
+            <ColourSets items={items} />
+          </div>
+        )
+      })
+    }
+  </Container>
+</DefaultLayout>

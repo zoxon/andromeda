@@ -1,0 +1,23 @@
+---
+import type { ClassName } from '@/types'
+
+export interface Props {
+  name: string
+  color: string
+  class?: ClassName
+}
+
+const { color, name, luminosity, class: className } = Astro.props
+---
+
+<div>
+  <div
+    class:list={['w-[180px] h-[180px] rounded-3xl flex flex-col p-4', className]}
+    style={{ 'background-color': color }}
+  >
+  </div>
+  <div class="mt-auto bg-white rounded-sm p-2">
+    <div>{name}</div>
+    <div>{color}</div>
+  </div>
+</div>

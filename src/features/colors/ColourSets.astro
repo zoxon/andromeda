@@ -1,0 +1,22 @@
+---
+import type { ClassName } from '@/types'
+import Color, { Props as ColorProps } from './Color.astro'
+
+export interface Props {
+  items: ColorProps[]
+  class?: ClassName
+}
+
+const { items, class: className } = Astro.props
+---
+
+<ul class:list={['flex flex-wrap gap-6', className]}>
+  {
+    items &&
+      items.map((item) => (
+        <li>
+          <Color {...item} />
+        </li>
+      ))
+  }
+</ul>
