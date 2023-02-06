@@ -1,0 +1,12 @@
+{
+  "overlays": "1800",
+  "modal": "1700",
+  "header": "1600",
+  "drawer": "1500",
+  "backdrop": "1400",
+  "fixed": "1300",
+  "sticky": "1200",
+  "dropdown": "1100",
+  "tooltip": "1000",
+  "max": "9999"
+}
