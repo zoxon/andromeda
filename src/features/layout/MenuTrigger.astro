@@ -1,0 +1,26 @@
+---
+import Button from '@/components/base/Button.astro'
+import { Sprite } from 'astro-icon'
+
+const { class: className } = Astro.props
+---
+
+<Button class:list={['flex p-4 text-slate-600 hover:text-blue-400', className]} data-component="menu-trigger">
+  <Sprite name="menu" class="fill-current w-6 h-6" />
+  <span class="sr-only">Toggle menu</span>
+</Button>
+
+<script>
+  import { Component, initComponent } from '@/helpers/components'
+  import { dispatchCustomEvent } from '@/helpers/events'
+
+  class MenuTrigger extends Component {
+    bindEvents() {
+      this.element.addEventListener('click', () => {
+        dispatchCustomEvent('drawer:toggle', 'mobile-menu')
+      })
+    }
+  }
+
+  initComponent('menu-trigger', MenuTrigger)
+</script>

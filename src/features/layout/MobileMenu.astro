@@ -1,0 +1,11 @@
+---
+import type { ClassName } from '@/types'
+
+export interface Props {
+  class?: ClassName
+}
+
+const { class: className } = Astro.props
+---
+
+<div class:list={['', className]}></div>

@@ -1,7 +1,9 @@
 ---
 import BaseLayout from '@/layouts/Base.astro'
-import Header from '@/components/layout/Header.astro'
-import Footer from '@/components/layout/Footer.astro'
+import Header from '@/features/layout/Header.astro'
+import Footer from '@/features/layout/Footer.astro'
+import Drawer from '@/components/base/Drawer.astro'
+import MobileMenu from '@/features/layout/MobileMenu.astro'
 
 import type { ClassName } from '@/types'
 
@@ -21,4 +23,8 @@ const { title, class: className } = Astro.props
   </main>
 
   <Footer />
+
+  <Drawer position="right" name="mobile-menu">
+    <MobileMenu />
+  </Drawer>
 </BaseLayout>

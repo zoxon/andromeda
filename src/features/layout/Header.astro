@@ -1,12 +1,12 @@
 ---
 import Container from '@/components/base/Container.astro'
-import Logo from '@/components/layout/Logo.astro'
-import MenuTrigger from '@/components/layout/MenuTrigger.astro'
+import Logo from '@/features/layout/Logo.astro'
+import MenuTrigger from '@/features/layout/MenuTrigger.astro'
 
 const { class: className } = Astro.props
 ---
 
-<header class:list={['bg-white shadow-md', className]}>
+<header class:list={['bg-white shadow', className]}>
   <Container class="h-20 flex items-center justify-between">
     <Logo />
     <MenuTrigger />
