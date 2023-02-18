@@ -1,0 +1,50 @@
+---
+import DefaultLayout from '@/layouts/Default.astro'
+import Container from '@/components/base/Container.astro'
+import Tabs from '@/components/base/Tabs.astro'
+import TabPanel from '@/components/base/TabPanel.astro'
+---
+
+<DefaultLayout title="Tabs">
+  <Container>
+    <h1 class="text-3xl font-bold mb-4">Tabs</h1>
+    <div>
+      <Tabs
+        tabs={[
+          { title: 'My Account', id: 'account' },
+          { title: 'Company', id: 'company' },
+          { title: 'Team Members', id: 'team' },
+          { title: 'Billing', id: 'billing' },
+        ]}
+      >
+        <TabPanel id="account">
+          <h2>Panel 1</h2>
+          <p>Hello world</p>
+        </TabPanel>
+
+        <TabPanel id="company">
+          <h2>Panel 2</h2>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum dolores cupiditate voluptate, sint possimus
+            illum corrupti iusto sequi consequuntur eos blanditiis. Provident numquam quaerat, rerum ullam nemo magni
+            blanditiis tenetur?
+          </p>
+        </TabPanel>
+
+        <TabPanel id="team">
+          <h2>Panel 3</h2>
+          <p>Heya</p>
+        </TabPanel>
+
+        <TabPanel id="billing">
+          <h2>Panel 4</h2>
+          <p>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum dolores cupiditate voluptate, sint possimus
+            illum corrupti iusto sequi consequuntur eos blanditiis. Provident numquam quaerat, rerum ullam nemo magni
+            blanditiis tenetur?
+          </p>
+        </TabPanel>
+      </Tabs>
+    </div>
+  </Container>
+</DefaultLayout>
