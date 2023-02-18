@@ -1,0 +1,201 @@
+---
+import type { ClassName } from '@/types'
+
+type Tab = {
+  title: string | ((...args: any[]) => string)
+  id: string
+}
+
+enum TabTheme {
+  underline = 'underline',
+}
+export interface Props {
+  tabs?: Tab[]
+  theme?: TabTheme
+  active?: string
+  fullWidth?: boolean
+  class?: ClassName
+}
+
+const { tabs = [], active = '', theme = 'underline', fullWidth = false, class: className } = Astro.props
+---
+
+<div
+  class:list={['tabs', { [`tabs--theme-${theme}`]: theme, 'tabs--full-width': fullWidth }, className]}
+  aria-multiselectable="false"
+  data-active={active}
+  data-component="tabs"
+>
+  <nav class="tabs__tablist" role="tablist">
+    {
+      tabs &&
+        tabs.map((tab) => {
+          const isActive = tab.id.toLowerCase() === active.toLowerCase()
+
+          return (
+            <button
+              class:list={['tabs__tab', { 'is-active': isActive }]}
+              id={`tab-label-${tab.id}`}
+              role="tab"
+              aria-controls={`tab-panel-${tab.id}`}
+              aria-selected={isActive ? 'true' : 'false'}
+              data-ref="tabs:tab"
+              data-id={tab.id}
+            >
+              {typeof tab.title === 'function' ? tab.title(active) : tab.title}
+            </button>
+          )
+        })
+    }
+  </nav>
+
+  <div class="tabs__panels">
+    <slot />
+  </div>
+</div>
+
+<style is:global>
+  .tabs {
+    &__tablist {
+      @apply relative select-none overflow-x-auto overflow-y-hidden whitespace-nowrap;
+      &::-webkit-scrollbar {
+        @apply hidden;
+      }
+    }
+
+    &--theme-underline &__tablist {
+      @apply flex items-center gap-8 border-b border-gray-200;
+    }
+
+    &--theme-underline &__tab {
+      @apply -mb-px whitespace-nowrap border-b-2 border-transparent py-4 px-2 text-sm font-medium text-gray-500 transition-all hover:border-gray-300 hover:text-gray-700;
+
+      &.is-active {
+        @apply border-blue-500 text-blue-600;
+      }
+    }
+
+    &--theme-underline &__panel {
+      @apply hidden;
+
+      &.is-current {
+        @apply block;
+      }
+    }
+
+    &--theme-underline&--full-width &__tablist {
+      @apply items-stretch;
+    }
+
+    &--theme-underline&--full-width &__tab {
+      @apply flex-1;
+    }
+  }
+</style>
+
+<script>
+  import { Component, initComponent } from '@/helpers/components'
+  import { getCursorDirection } from '@/helpers/events'
+
+  interface Tabs {
+    tabs: HTMLElement[]
+    panels: HTMLElement[]
+    selected: HTMLElement
+  }
+
+  class Tabs extends Component {
+    buildCache() {
+      this.tabs = this.getAll<HTMLElement>('tab')
+      this.panels = this.getAll<HTMLElement>('panel')
+    }
+
+    bindEvents() {
+      this.tabs.forEach((tab, index) => {
+        tab.addEventListener('keydown', (event) => this.handleKeydown(event, tab))
+        tab.addEventListener('click', (event) => this.handleClick(event, tab, index))
+      })
+    }
+
+    init() {
+      this.selectActive()
+    }
+
+    selectActive() {
+      let index = 0
+      this.selected = this.tabs[index]
+
+      const active = this.element.dataset.active
+      this.tabs.forEach((tab, i) => {
+        console.log(tab.dataset.id, active)
+        if (tab.dataset.id === active) {
+          this.selected = tab
+          index = i
+        }
+      })
+
+      console.log(this.selected, index)
+
+      this.switchTab(this.selected, index)
+    }
+
+    switchTab(newTab: HTMLElement) {
+      this.selected = newTab
+      const id = newTab.dataset.id
+
+      this.tabs.forEach((tab) => {
+        if (tab === newTab) {
+          tab.removeAttribute('tabindex')
+          tab.setAttribute('aria-selected', 'true')
+          tab.classList.add('is-active')
+          tab.focus()
+          return
+        }
+
+        tab.removeAttribute('aria-selected')
+        tab.setAttribute('tabindex', '-1')
+        tab.classList.remove('is-active')
+      })
+
+      this.panels.forEach((panel) => {
+        if (panel.dataset.id === newTab.dataset.id) {
+          panel.hidden = false
+          panel.classList.add('is-current')
+          return
+        }
+
+        panel.classList.remove('is-current')
+        panel.hidden = true
+      })
+    }
+
+    handleClick(event: MouseEvent, tab: HTMLElement, index: number) {
+      event.preventDefault()
+
+      if (tab !== this.selected) {
+        this.switchTab(tab, index)
+      }
+    }
+
+    handleKeydown(event: KeyboardEvent, tab: HTMLElement) {
+      event.preventDefault()
+
+      const index: number = this.tabs.indexOf(tab)
+
+      const maxIndex = this.tabs.length - 1
+      let directionIndex = index
+      let direction = getCursorDirection(event)
+
+      if (direction === 1 && directionIndex !== maxIndex) {
+        directionIndex = index + 1
+      }
+
+      if (direction === -1 && directionIndex !== 0) {
+        directionIndex = index - 1
+      }
+
+      this.switchTab(this.tabs[directionIndex], directionIndex)
+    }
+  }
+
+  initComponent('tabs', Tabs)
+</script>

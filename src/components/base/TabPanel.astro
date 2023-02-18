@@ -1,0 +1,24 @@
+---
+import type { ClassName } from '@/types'
+
+export interface Props {
+  id: string
+  class?: ClassName
+}
+
+const { id = '', class: className } = Astro.props
+const isCurrent = false
+---
+
+<div
+  class:list={['tabs__panel', { 'is-current': isCurrent }, className]}
+  id={`tab-panel-${id}`}
+  role="tabpanel"
+  aria-labelledby={`tab-label-${id}`}
+  aria-hidden={isCurrent ? 'false' : 'true'}
+  tabindex="-1"
+  data-ref="tabs:panel"
+  data-id={id}
+>
+  <slot />
+</div>
