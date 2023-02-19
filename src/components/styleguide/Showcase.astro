@@ -1,0 +1,28 @@
+---
+import { Sprite } from 'astro-icon'
+import { Code } from 'astro/components'
+import type { ClassName } from '@/types'
+
+export interface Props {
+  title: string
+  class?: ClassName
+}
+
+const { title, class: className } = Astro.props
+
+const code = Astro.slots.has('default') ? await Astro.slots.render('default') : ''
+---
+
+<div class:list={['border-b border-t border-gray-100 sm:border sm:rounded-lg overflow-hidden mb-16', className]}>
+  <div class="px-4 py-2 border-b border-gray-100 bg-white sm:py-4 sm:px-6 sm:items-baseline">
+    <h3 class="font-regular text-base md:text-lg leading-snug truncate">
+      {title}
+    </h3>
+  </div>
+
+  <div class="relative bg-white">
+    <div class="sm:min-w-preview-mobile relative sm:pr-4 px-4 sm:px-6 lg:px-8 py-6">
+      <slot />
+    </div>
+  </div>
+</div>
