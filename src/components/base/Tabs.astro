@@ -1,11 +1,20 @@
 ---
-import { Sprite } from 'astro-icon'
+import { Icon } from 'astro-icon'
 import type { ClassName } from '@/types'
+import { isObject } from '@/helpers/is'
+
+type Icon =
+  | {
+      name: string
+      pack?: string
+      size?: number
+    }
+  | string
 
 type Tab = {
   title: string
   id: string
-  icon?: string
+  icon?: Icon
 }
 
 enum TabTheme {
@@ -20,6 +29,12 @@ export interface Props {
 }
 
 const { tabs = [], active = '', theme = 'underline', fullWidth = false, class: className } = Astro.props
+
+const normalizeIconProps = (icon: Icon) => {
+  if (typeof icon === 'string') return { name: icon }
+  if (isObject(icon)) return icon
+  return undefined
+}
 ---
 
 <div
@@ -44,7 +59,7 @@ const { tabs = [], active = '', theme = 'underline', fullWidth = false, class: c
               data-ref="tabs:tab"
               data-id={tab.id}
             >
-              {tab.icon && <Sprite name={tab.icon} class="h-5 w-5" />}
+              {tab.icon && <Icon {...normalizeIconProps(tab.icon)} class="h-5 w-5" />}
               <span>{tab.title}</span>
             </button>
           )
@@ -67,7 +82,7 @@ const { tabs = [], active = '', theme = 'underline', fullWidth = false, class: c
     }
 
     &__tab {
-      @apply flex items-center gap-2;
+      @apply flex items-center justify-center gap-2;
     }
 
     &--theme-underline &__tablist {
