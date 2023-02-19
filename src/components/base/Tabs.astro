@@ -1,9 +1,11 @@
 ---
+import { Sprite } from 'astro-icon'
 import type { ClassName } from '@/types'
 
 type Tab = {
-  title: string | ((...args: any[]) => string)
+  title: string
   id: string
+  icon?: string
 }
 
 enum TabTheme {
@@ -42,7 +44,8 @@ const { tabs = [], active = '', theme = 'underline', fullWidth = false, class: c
               data-ref="tabs:tab"
               data-id={tab.id}
             >
-              {typeof tab.title === 'function' ? tab.title(active) : tab.title}
+              {tab.icon && <Sprite name={tab.icon} class="h-5 w-5" />}
+              <span>{tab.title}</span>
             </button>
           )
         })
@@ -63,6 +66,10 @@ const { tabs = [], active = '', theme = 'underline', fullWidth = false, class: c
       }
     }
 
+    &__tab {
+      @apply flex items-center gap-2;
+    }
+
     &--theme-underline &__tablist {
       @apply flex items-center gap-8 border-b border-gray-200;
     }
@@ -76,7 +83,7 @@ const { tabs = [], active = '', theme = 'underline', fullWidth = false, class: c
     }
 
     &--theme-underline &__panel {
-      @apply hidden;
+      @apply hidden px-2 py-6;
 
       &.is-current {
         @apply block;
