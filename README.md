@@ -1,4 +1,4 @@
-# Andromeda
+# Andromeda (WIP)
 
 Frontend template and framework built on [Astro](https://astro.build/) components
 
